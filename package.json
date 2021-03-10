@@ -1,0 +1,23 @@
+{
+  "name": "sqs_with_sls_example",
+  "version": "1.0.0",
+  "description": "Example SQS template using Serverless",
+  "main": "handler.js",
+  "scripts": {
+    "sls": "sls",
+    "deploy": "sls deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rujmah/sqs_with_sls_example.git"
+  },
+  "author": "Robin Mayfield <robin@degu.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rujmah/sqs_with_sls_example/issues"
+  },
+  "homepage": "https://github.com/rujmah/sqs_with_sls_example#readme",
+  "devDependencies": {
+    "serverless": "^2.29.0"
+  }
+}

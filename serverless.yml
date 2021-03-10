@@ -1,0 +1,67 @@
+service: exampleSQS
+frameworkVersion: "2"
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: eu-west-1
+
+package:
+  include:
+    - node_modules/
+  exclude:
+    - package.json
+    - package-lock.json
+
+custom:
+  appName: exampleSQS
+
+functions:
+  processMessage:
+    handler: handler.processMessage
+    events:
+      - sqs:
+          arn: !GetAtt exampleSQSQueue.Arn
+          batchSize: 3
+
+resources:
+  Resources:
+    exampleSQSQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "exampleSQSQueue"
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt exampleSQSDLQ.Arn
+          maxReceiveCount: 3
+    exampleSQSDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "exampleSQSDLQ"
+    exampleSQSQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref exampleSQSQueue
+        PolicyDocument:
+          Statement:
+            - Action:
+                - "SQS:SendMessage"
+              Effect: "Allow"
+              Principal: "*"
+              Resource: !GetAtt exampleSQSQueue.Arn
+
+  Outputs:
+    exampleSQSQueueURL:
+      Description: "URL of exampleSQSQueue"
+      Value: !Ref exampleSQSQueue
+    exampleSQSQueueARN:
+      Description: "ARN of exampleSQSQueue"
+      Value: !GetAtt exampleSQSQueue.Arn
+    exampleSQSDLQURL:
+      Description: "URL of exampleSQSDLQ"
+      Value: !Ref exampleSQSDLQ
+    exampleSQSDLQARN:
+      Description: "ARN of exampleSQSDLQ"
+      Value: !GetAtt exampleSQSDLQ.Arn
